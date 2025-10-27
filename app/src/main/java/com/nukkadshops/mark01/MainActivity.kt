@@ -11,16 +11,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.nukkadshops.mark01.SecondActivity
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var login: Button
     private var backPressedTime: Long = 0
     private lateinit var toast: Toast
-    //private lateinit var dbHelper: DatabaseHelper
+    private lateinit var dbHelper: DatabaseHelper
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,21 +25,21 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val emailEt = findViewById<EditText>(R.id.email)
+        val emailEt = findViewById<EditText>(R.id.username)
         val passwordEt = findViewById<EditText>(R.id.password)
         login = findViewById(R.id.loginclick)
-        //dbHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
 
         login.setOnClickListener {
-            //val email = emailEt.text.toString().trim()
-            //val password = passwordEt.text.toString().trim()
+            val email = emailEt.text.toString().trim()
+            val password = passwordEt.text.toString().trim()
             val intent = Intent(this@MainActivity, SecondActivity::class.java)
             startActivity(intent)
 
-//            if (email.isEmpty() || password.isEmpty()) {
-//                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
 //            login.isEnabled = true
 //            lifecycleScope.launch {
