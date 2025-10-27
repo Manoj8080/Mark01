@@ -13,7 +13,7 @@ class Adaptor(private val context: Context, private val elements : MutableList<M
         parent: ViewGroup,
         viewType: Int
     ): ExampleViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_second, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
         return ExampleViewHolder(view)
 
     }

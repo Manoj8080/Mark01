@@ -5,16 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var login: Button
+    private lateinit var username : EditText
+    private lateinit var password : EditText
     private var backPressedTime: Long = 0
     private lateinit var toast: Toast
     private lateinit var dbHelper: DatabaseHelper
@@ -25,51 +30,59 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val emailEt = findViewById<EditText>(R.id.username)
-        val passwordEt = findViewById<EditText>(R.id.password)
         login = findViewById(R.id.loginclick)
+        username = findViewById(R.id.username)
+        password = findViewById(R.id.password)
         dbHelper = DatabaseHelper(this)
 
+        //api calling
         login.setOnClickListener {
-            val email = emailEt.text.toString().trim()
-            val password = passwordEt.text.toString().trim()
-            val intent = Intent(this@MainActivity, SecondActivity::class.java)
-            startActivity(intent)
+            val username1 = username.text.toString().trim()
+            val password1 = password.text.toString().trim()
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show()
+            if(username1.isEmpty() || password1.isEmpty()){
+                Toast.makeText(this,"***ENTER EMAIL AND PASSWORD***", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-//            login.isEnabled = true
-//            lifecycleScope.launch {
-//                try {
-//                    val response = ApiClient.api.login(LoginRequest(email, password))
-//                    val bodyString = when {
-//                        response.isSuccessful -> response.body()?.string()
-//                        else -> response.errorBody()?.string()
-//                    } ?: ""
-//
-//                    if (response.isSuccessful) {
-//                        // ✅ Store credentials locally
-//                        dbHelper.insertUser(email, password)
-//                        val intent = Intent(this@MainActivity, SecondActivity::class.java).apply {
-//                            putExtra("api_response", bodyString)
-//
-//                            insertUser(username,password)
-//                        }
-//                        startActivity(intent)
-//                    }else {
-//                        Toast.makeText(this@MainActivity, "Login failed: $bodyString", Toast.LENGTH_SHORT).show()
-//                        return@launch
-//                    }
-//
-//                } catch (e: Exception) {
-//                    Toast.makeText(this@MainActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
-//                } finally {
-//                    login.isEnabled = true
-//                }
-//            }
+            login.isEnabled = false
+
+            lifecycleScope.launch {
+
+                try{
+                    val response = ApiClient.api.login(LoginRequest(username1,password1))
+//                    Log.d("API_RESPONSE", "Response Code: ${response.code()}")
+//                    Log.d("API_RESPONSE", "Response Body: ${response.body()}")
+//                    Log.d("API_RESPONSE", "Error Body: ${response.errorBody()?.string()}")
+
+
+                    //val body = response.body()
+                    if (response.isSuccessful && response.body()?.message=="Login successful"){
+                        val data = response.body()
+                        dbHelper.addUser(Users(username1,password1))
+                        data?.let { it1 ->
+                            for (lang in it1.languages){
+                                dbHelper.insertLanguage(username1, lang.language_name)
+                            }
+                        }
+                        Toast.makeText(this@MainActivity, "Login Successful",Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@MainActivity, SecondActivity::class.java)
+                        intent.putExtra("Username",username1)
+                        startActivity(intent)
+                    }else{
+                        Toast.makeText(this@MainActivity,"Login Failed", Toast.LENGTH_SHORT).show()
+                        //Log.e("LOGIN_ERROR", "Response code: ${response.code()}, message: ${response.message()}")
+                    }
+
+                }catch (e: Exception){
+
+                    Toast.makeText(this@MainActivity,"Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }finally {
+                    login.isEnabled = true
+                }
+
+            }
+
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.linear)) { v, insets ->
