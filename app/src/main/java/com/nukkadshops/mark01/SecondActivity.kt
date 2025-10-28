@@ -59,7 +59,7 @@ class SecondActivity : AppCompatActivity() {
     private fun showLogoutDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("***LOGOUT***")
-        builder.setMessage("Bhayataki Pothava ?")
+        builder.setMessage("Do You Want To LOOGUT ?")
         builder.setPositiveButton("Yes") { dialog, _ ->
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)

@@ -5,29 +5,34 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/second"
     android:orientation="vertical"
     tools:context=".SecondActivity">
 
     <SearchView
         android:id="@+id/search"
-        android:layout_width="match_parent"
+        android:layout_width="297dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="60dp"
         android:layout_marginRight="30dp"
+        android:gravity="center"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search here...."
         tools:visibility="visible">
 
     </SearchView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="315dp"
+        android:layout_height="520dp"
+        android:layout_gravity="center"
+        android:layout_margin="40sp"
+        android:layout_marginLeft="50sp"
+        android:layout_marginRight="50sp"
+        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
         tools:listitem="@layout/item_layout" />
 
 
