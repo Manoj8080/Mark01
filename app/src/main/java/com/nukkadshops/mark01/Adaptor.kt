@@ -4,12 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 
 class Adaptor(
     private val context: Context,
-    private val originalList: MutableList<Models>
+    private val originalList: MutableList<Models>,
+    private val onItemClickListener: (Models) -> Unit
 ) : RecyclerView.Adapter<Adaptor.ExampleViewHolder>() {
 
     // Maintain a filtered copy of the data
@@ -24,12 +28,19 @@ class Adaptor(
     override fun onBindViewHolder(holder: ExampleViewHolder, position: Int) {
         val currentItem = filteredList[position]
         holder.title.text = currentItem.title
+//        holder.itemView.setOnClickListener {
+//            onItemClickListener(currentItem)
+//        }
+        holder.cardView.setOnClickListener {
+            onItemClickListener(currentItem)
+        }
     }
 
     override fun getItemCount(): Int = filteredList.size
 
     inner class ExampleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.headerText)
+        val cardView: ConstraintLayout=view.findViewById(R.id.cardView)
     }
 
     // 🔹 Called when user types in search

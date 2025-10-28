@@ -30,11 +30,16 @@ class SecondActivity : AppCompatActivity() {
             .map { Models(it) } // then convert to Models
             .toMutableList()
 
+        // Set up the adapter with item click listener
+        adapter = Adaptor(this, languageList) { selectedModel ->
+            // Handle item click
+            showItemClickDialog(selectedModel)
+        }
 
-        adapter = Adaptor(this, languageList)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        // Search functionality
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
@@ -50,26 +55,39 @@ class SecondActivity : AppCompatActivity() {
                 return true
             }
         })
-        onBackPressedDispatcher.addCallback(this,object: androidx.activity.OnBackPressedCallback(true){
+
+        // Back press dialog
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showLogoutDialog()
             }
         })
     }
+
     private fun showLogoutDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("***LOGOUT***")
-        builder.setMessage("Do You Want To LOOGUT ?")
+        builder.setMessage("Do You Want To LOGOUT?")
         builder.setPositiveButton("Yes") { dialog, _ ->
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
             dialog.dismiss()
         }
-
         builder.setNegativeButton("No") { dialog, _ ->
             dialog.dismiss()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
 
+    private fun showItemClickDialog(selectedModel: Models) {
+        // Show a dialog or take any other action with the clicked item
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Item Selected")
+        builder.setMessage("You selected: ${selectedModel.title}")
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
         }
         val alertDialog = builder.create()
         alertDialog.show()
