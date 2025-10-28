@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toast: Toast
     private lateinit var dbHelper: DatabaseHelper
 
-    @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -61,9 +61,8 @@ class MainActivity : AppCompatActivity() {
                         val data = response.body()
                         dbHelper.addUser(Users(username1,password1))
                         data?.let { it1 ->
-                            for (lang in it1.languages){
-                                dbHelper.insertLanguage(username1, lang.language_name)
-                            }
+                            val languageNames=it1.languages.map{lang->lang.language_name}
+                            dbHelper.insertLanguages(username1,languageNames)
                         }
                         Toast.makeText(this@MainActivity, "Login Successful",Toast.LENGTH_SHORT).show()
                         val intent = Intent(this@MainActivity, SecondActivity::class.java)

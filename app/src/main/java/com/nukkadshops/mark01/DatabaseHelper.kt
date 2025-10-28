@@ -56,14 +56,37 @@ class DatabaseHelper (context:Context): SQLiteOpenHelper(context, DATABASE_NAME,
         return exists
     }
 
-    fun insertLanguage(username: String, language: String): Boolean {
+    fun insertLanguages(username: String, languages: List<String>) {
         val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(COL_USERNAME, username)
-        contentValues.put(COL_LANG_NAME, language)
-        val result = db.insert(TABLE_NAME_LANGUAGES, null, contentValues)
-        db.close()
-        return result != -1L
+        db.beginTransaction()
+        try {
+            for (language in languages) {
+                val contentValues = ContentValues()
+                contentValues.put(COL_USERNAME, username)
+                contentValues.put(COL_LANG_NAME, language)
+                db.insert(TABLE_NAME_LANGUAGES, null, contentValues)
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
     }
+
+    fun getLanguagesForUser(username: String): List<String> {
+        val db = this.readableDatabase
+        val languages = mutableListOf<String>()
+        val query = "SELECT $COL_LANG_NAME FROM $TABLE_NAME_LANGUAGES WHERE $COL_USERNAME=?"
+        val cursor = db.rawQuery(query, arrayOf(username))
+        if (cursor.moveToFirst()) {
+            do {
+                languages.add(cursor.getString(0))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return languages
+    }
+
 
 }

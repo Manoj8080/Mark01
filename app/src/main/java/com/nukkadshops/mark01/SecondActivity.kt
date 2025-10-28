@@ -1,43 +1,77 @@
 package com.nukkadshops.mark01
 
 import android.os.Bundle
-import android.widget.Adapter
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.json.JSONArray
-import org.json.JSONObject
+import android.widget.SearchView
+import android.app.AlertDialog
+import android.content.Intent
 
 class SecondActivity : AppCompatActivity() {
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: Adaptor
+    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var searchView: SearchView
+    private var languageList = mutableListOf<Models>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
         recyclerView = findViewById(R.id.recyclerView)
-        val exampleList = generateList(20)
+        searchView = findViewById(R.id.search)
+        dbHelper = DatabaseHelper(this)
 
-        adapter = Adaptor(this, exampleList)
-        recyclerView.adapter = adapter
+        val username = intent.getStringExtra("Username") ?: return
+        val languages = dbHelper.getLanguagesForUser(username)
+        languageList = languages
+            .distinct() // remove duplicate names first
+            .map { Models(it) } // then convert to Models
+            .toMutableList()
+
+
+        adapter = Adaptor(this, languageList)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
+        recyclerView.adapter = adapter
 
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrEmpty()) {
+                    adapter.resetList()
+                } else {
+                    val filteredList = languageList.filter {
+                        it.title.contains(newText, ignoreCase = true)
+                    }
+                    adapter.updateList(filteredList)
+                }
+                return true
+            }
+        })
+        onBackPressedDispatcher.addCallback(this,object: androidx.activity.OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                showLogoutDialog()
+            }
+        })
     }
-    private fun generateList(size: Int): MutableList<Models>{
-        val list = mutableListOf<Models>()
-        for (i in 0 until size){
-            list.add(Models("Item $i"))
-            //val item = Models("Item $i")
-            //list += item
+    private fun showLogoutDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("***LOGOUT***")
+        builder.setMessage("Bhayataki Pothava ?")
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            dialog.dismiss()
         }
-        return list
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
     }
-
-
 }
