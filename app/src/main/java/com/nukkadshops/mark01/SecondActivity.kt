@@ -31,7 +31,7 @@ class SecondActivity : AppCompatActivity() {
             .toMutableList()
 
         // Set up the adapter with item click listener
-        adapter = Adaptor(this, languageList) { selectedModel ->
+        adapter = Adaptor(this@SecondActivity, languageList) { selectedModel ->
             // Handle item click
             showItemClickDialog(selectedModel)
         }
