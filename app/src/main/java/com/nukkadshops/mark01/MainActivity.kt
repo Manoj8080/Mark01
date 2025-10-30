@@ -59,14 +59,17 @@ class MainActivity : AppCompatActivity() {
                     //val body = response.body()
                     if (response.isSuccessful && response.body()?.message=="Login successful"){
                         val data = response.body()
+
                         dbHelper.addUser(Users(username1,password1))
-                        data?.let { it1 ->
-                            val languageNames=it1.languages.map{lang->lang.language_name}
+                        data?.let {
+                            val languageNames=data.languages.map{lang->lang.language_name}
                             dbHelper.insertLanguages(username1,languageNames)
                         }
                         Toast.makeText(this@MainActivity, "Login Successful",Toast.LENGTH_SHORT).show()
                         val intent = Intent(this@MainActivity, SecondActivity::class.java)
                         intent.putExtra("Username",username1)
+                        intent.putExtra("userId", data?.userId)  // <--- userId
+                        intent.putParcelableArrayListExtra("languages", ArrayList(data?.languages))
                         startActivity(intent)
                     }else{
                         Toast.makeText(this@MainActivity,"Login Failed", Toast.LENGTH_SHORT).show()
