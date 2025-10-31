@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
                     }
 
                 }catch (e: Exception){
-
                     Toast.makeText(this@MainActivity,"Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }finally {
                     login.isEnabled = true

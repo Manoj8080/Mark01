@@ -12,6 +12,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import android.widget.SearchView
+import androidx.activity.enableEdgeToEdge
 
 class SecondActivity : AppCompatActivity() {
 
@@ -26,6 +27,7 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
+        enableEdgeToEdge()
 
         // ✅ Receive from MainActivity
         userId = intent.getIntExtra("userId", 0)

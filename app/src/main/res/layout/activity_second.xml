@@ -25,10 +25,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="315dp"
-        android:layout_height="520dp"
+        android:layout_width="302dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="40sp"
+        android:layout_margin="30sp"
         android:layout_marginLeft="50sp"
         android:layout_marginRight="50sp"
         android:background="@android:color/transparent"
