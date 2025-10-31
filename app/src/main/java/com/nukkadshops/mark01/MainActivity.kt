@@ -40,8 +40,17 @@ class MainActivity : AppCompatActivity() {
             val username1 = username.text.toString().trim()
             val password1 = password.text.toString().trim()
 
+
+            if(username1.isEmpty()){
+                Toast.makeText(this,"***ENTER USERNAME***", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if(password1.isEmpty()){
+                Toast.makeText(this,"***ENTER PASSWORD***", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             if(username1.isEmpty() || password1.isEmpty()){
-                Toast.makeText(this,"***ENTER EMAIL AND PASSWORD***", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"***ENTER USERNAME AND PASSWORD***", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -51,15 +60,8 @@ class MainActivity : AppCompatActivity() {
 
                 try{
                     val response = ApiClient.api.login(LoginRequest(username1,password1))
-//                    Log.d("API_RESPONSE", "Response Code: ${response.code()}")
-//                    Log.d("API_RESPONSE", "Response Body: ${response.body()}")
-//                    Log.d("API_RESPONSE", "Error Body: ${response.errorBody()?.string()}")
-
-
-                    //val body = response.body()
                     if (response.isSuccessful && response.body()?.message=="Login successful"){
                         val data = response.body()
-
                         dbHelper.addUser(Users(username1,password1))
                         data?.let {
                             val languageNames=data.languages.map{lang->lang.language_name}
